@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_tree_order_ecpay" model="ir.ui.view">
+        <field name="name">綠界訂單列表</field>
+        <field name="model">order.ecpay.model</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="MerchantTradeDate"/>
+                <field name="MerchantTradeNo"/>
+                <field name="TradeNo"/>
+                <field name="TradeAmt"/>
+                <field name="PaymentType"/>
+                <field name="RtnMsg"/>
+                <field name="SimulatePaid"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="order_ecpay_view_form" model="ir.ui.view">
+        <field name="name">order_ecpay.view.form</field>
+        <field name="model">order.ecpay.model</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="MerchantTradeDate" readonly="1"/>
+                            <field name="MerchantTradeNo" readonly="1"/>
+                            <field name="ReferenceNo" readonly="1"/>
+                            <field name="TradeNo" readonly="1"/>
+                            <field name="TradeAmt" readonly="1"/>
+                            <field name="PaymentType" readonly="1"/>
+                            <field name="PaymentDate" readonly="1"/>
+                            <field name="SimulatePaid" readonly="1"/>
+                            <field name="RtnCode" readonly="1"/>
+                            <field name="card4no" readonly="1"/>
+                            <field name="stage" readonly="1"/>
+                            <field name="RtnMsg" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="InvoiceMark" readonly="1"/>
+                            <field name="BankCode" readonly="1"/>
+                            <field name="vAccount" readonly="1"/>
+                            <field name="ExpireDate" readonly="1"/>
+                            <field name="PaymentNo" readonly="1"/>
+                            <field name="Barcode1" readonly="1"/>
+                            <field name="Barcode2" readonly="1"/>
+                            <field name="Barcode3" readonly="1"/>
+                            <field name="sale_order_id" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_menuitem_order_ecpay" model="ir.actions.act_window">
+        <field name="name">綠界金流訂單</field>
+        <field name="res_model">order.ecpay.model</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menuitem_order_ecpay" name="綠界金流訂單" action="action_menuitem_order_ecpay"
+              parent="account.menu_finance_receivables" groups="payment_ecpay.group_user" sequence="20"/>
+
+</odoo>

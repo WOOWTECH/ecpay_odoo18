@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Migrated from Odoo 16.0 to 18.0 -->
+<odoo>
+    <!-- ECPay payment type selection in checkout - Odoo 18 uses payment.form -->
+    <template id="ecpay_payment_type" name="ECPay Payment Type" inherit_id="payment.form">
+        <xpath expr="//form[@id='o_payment_form']" position="inside">
+            <!-- ECPay payment type selection dropdown - shown when ECPay provider is selected -->
+            <div class="ecpay_payment_options d-none mt-3">
+                <div class="form-group col-md-6 mb-3">
+                    <label for="ecpay_payment_type" class="form-label">付款方式</label>
+                    <select class="form-select" id="ecpay_payment_type" name="ecpay_payment_type">
+                        <option value="Credit" selected="selected">信用卡一次付清</option>
+                        <option value="ecpay_credit_ids">信用卡分期</option>
+                        <option value="ApplePay">Apple Pay</option>
+                        <option value="WebATM">網路 ATM</option>
+                        <option value="ATM">自動櫃員機 ATM</option>
+                        <option value="CVS">超商代碼</option>
+                        <option value="BARCODE">超商條碼</option>
+                        <option value="BNPL">無卡分期 BNPL</option>
+                        <option value="TWQR">行動支付 TWQR</option>
+                    </select>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Redirect form for ECPay payment gateway -->
+    <template id="redirect_form">
+        <form t-att-action="api_url" method="post">
+            <t t-foreach="parameters" t-as="parameter">
+                <input type="hidden" t-att-name="parameter" t-att-value="parameter_value"/>
+            </t>
+        </form>
+    </template>
+
+</odoo>
