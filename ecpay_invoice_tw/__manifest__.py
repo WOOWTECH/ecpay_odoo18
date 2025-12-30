@@ -31,7 +31,7 @@
         'report/uniform_invoice_report.xml'
     ],
     'external_dependencies': {
-        'python': ['Cryptodome'],
+        'python': ['pycryptodomex'],
         'bin': [],
     },
     "assets": {
