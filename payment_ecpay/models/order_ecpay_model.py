@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 class OrderEcpayModel(models.Model):
     _name = "order.ecpay.model"
+    _description = "ECPay Order Information"
 
     MerchantTradeDate = fields.Char("訂單日期", groups="base.group_user", help="訂單日期")
     ReferenceNo = fields.Char("訂單編號", groups="base.group_user", help="訂單編號")

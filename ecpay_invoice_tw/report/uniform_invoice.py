@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 
 class ReportEcpayInvoice(models.AbstractModel):
     _name = 'report.ecpay_invoice_tw.invoice'
+    _description = 'ECPay Invoice Report'
 
     @api.model
     def _get_report_values(self, docids, data=None):
