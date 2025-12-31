@@ -220,8 +220,8 @@
 | Missing _description | uniform_invoice.py | Added model description | b40c2dc |
 | Missing _description | order_ecpay_model.py | Added model description | b40c2dc |
 | String comparison warning | ecpay_payment_sdk.py | Use == instead of is | b40c2dc |
-| BUG-003: Missing kwargs | account_move_reversal.py | Added `**kwargs` to `reverse_moves()` | TBD |
-| BUG-004: refund_method removed | account_move_reversal.py | Use `kwargs.get('is_modify')` | TBD |
+| BUG-003: Missing kwargs | account_move_reversal.py | Added `**kwargs` to `reverse_moves()` | f0435c1 |
+| BUG-004: refund_method removed | account_move_reversal.py | Use `kwargs.get('is_modify')` | f0435c1 |
 
 ## Known Issues (Not Fixed)
 | Issue | File | Description | Recommendation |
