@@ -7,8 +7,8 @@ from odoo import models
 class AccountMoveReversalInherit(models.TransientModel):
     _inherit = 'account.move.reversal'
 
-    def reverse_moves(self):
-        res = super(AccountMoveReversalInherit, self).reverse_moves()
+    def reverse_moves(self, **kwargs):
+        res = super(AccountMoveReversalInherit, self).reverse_moves(**kwargs)
         context = dict(self._context or {})
         # 取得欲作廢或折讓的應收憑單
         invoices = self.env['account.move'].browse(context.get('active_ids'))
@@ -28,7 +28,8 @@ class AccountMoveReversalInherit(models.TransientModel):
             if not reversed_moves:
                 continue
             #  流程改變 折讓就是折讓 與作廢無關
-            if self.refund_method != 'refund':
+            # Odoo 18: refund_method removed, use is_modify parameter instead
+            if kwargs.get('is_modify', False):
                 # 設定該折讓單要關聯折讓的統一發票
                 reversed_moves.write({
                     'ecpay_invoice_id': invoice.ecpay_invoice_id.id,
