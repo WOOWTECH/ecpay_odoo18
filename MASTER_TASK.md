@@ -13,10 +13,9 @@
 | Completed | 10 |
 | In Progress | 0 |
 | Pending | 0 |
-| Tests Passed | 8 |
-| Tests with Issues | 2 |
-| Bugs Fixed | 2 |
-| Bugs Documented | 3 |
+| Tests Passed | 10 |
+| Bugs Fixed | 3 |
+| Bugs Documented | 2 |
 
 ## Task Summaries
 
@@ -342,7 +341,7 @@ Comprehensive testing of all three ECPay Odoo 18 modules completed with detailed
 | Module | Overall Status | Key Findings |
 |--------|----------------|--------------|
 | ecpay_invoice_tw | ✅ Functional | 2 bugs fixed, 2 design limitations documented |
-| ecpay_invoice_website | ⚠️ Partially Working | Critical BUG-005 prevents data saving |
+| ecpay_invoice_website | ✅ Functional | BUG-005 fixed (commit 418a8a9) |
 | payment_ecpay | ✅ Functional | Works correctly in test mode |
 
 **Bugs Fixed During Testing:**
@@ -350,13 +349,13 @@ Comprehensive testing of all three ECPay Odoo 18 modules completed with detailed
 |-----|----------|--------|
 | BUG-003 | Critical | ✅ Fixed (commit f0435c1) |
 | BUG-004 | Critical | ✅ Fixed (commit f0435c1) |
+| BUG-005 | Critical | ✅ Fixed (commit 418a8a9) |
 
 **Known Issues Requiring Future Fix:**
 | Bug | Severity | Module | Impact |
 |-----|----------|--------|--------|
 | BUG-001 | Medium | ecpay_invoice_tw | Cannot input carrier number on invoice |
 | BUG-002 | Medium | ecpay_invoice_tw | Cannot set donation/print on invoice UI |
-| BUG-005 | **Critical** | ecpay_invoice_website | E-invoice options not saved from checkout |
 
 **Production Readiness:**
 
@@ -366,13 +365,12 @@ Comprehensive testing of all three ECPay Odoo 18 modules completed with detailed
 | ECPay Invoice Void | ✅ Yes | After bug fixes |
 | ECPay Invoice Allowance | ✅ Yes | After bug fixes |
 | ECPay Payment Gateway | ✅ Yes | All methods tested |
-| Website E-invoice Options | ❌ No | BUG-005 must be fixed |
+| Website E-invoice Options | ✅ Yes | BUG-005 fixed |
 
 **Recommended Actions Before Production:**
-1. **MUST FIX:** BUG-005 - E-invoice options not saved during checkout
-2. **SHOULD FIX:** BUG-001/002 - Invoice form field limitations
-3. **SHOULD ADD:** Carrier number input for mobile barcode
-4. **SHOULD ADD:** Lovecode input for donation option
+1. **SHOULD FIX:** BUG-001/002 - Invoice form field limitations
+2. **SHOULD ADD:** Carrier number input field in checkout template for mobile barcode
+3. **SHOULD ADD:** Lovecode input field in checkout template for donation option
 
 ---
 
@@ -384,13 +382,13 @@ Comprehensive testing of all three ECPay Odoo 18 modules completed with detailed
 | String comparison warning | ecpay_payment_sdk.py | Use == instead of is | b40c2dc |
 | BUG-003: Missing kwargs | account_move_reversal.py | Added `**kwargs` to `reverse_moves()` | f0435c1 |
 | BUG-004: refund_method removed | account_move_reversal.py | Use `kwargs.get('is_modify')` | f0435c1 |
+| BUG-005: Parameter mismatch | invoice.js + main.py | Changed `e_type` to `invoice_type`, added `donate_flag`, safe type conversion | 418a8a9 |
 
 ## Known Issues (Not Fixed)
 | Issue | File | Description | Recommendation |
 |-------|------|-------------|----------------|
 | BUG-001 | account_invoice.py:41 | `carrierNum` is readonly related field, cannot store user input | Change to regular Char field with onchange handler |
 | BUG-002 | account_invoice.py:34-40 | Donation/print fields are readonly, cannot be set via UI | Remove readonly or add wizard for manual entry |
-| BUG-005 | ecpay_invoice_website/controllers/main.py:39 + static/src/js/invoice.js:267-274 | E-invoice options not saved during checkout - JavaScript sends `e_type` but controller expects `invoice_type` | Fix parameter name in JS or controller to match |
 
 ## Screenshots
 | # | Filename | Description |
@@ -448,8 +446,5 @@ Comprehensive testing of all three ECPay Odoo 18 modules completed with detailed
 3. **BUG-001 Fix:** Change `carrierNum` field from related field to regular Char field to allow user input for mobile barcode and natural person certificate carriers
 4. **BUG-002 Fix:** Either remove readonly attribute from donation/print fields, or create a wizard to allow manual entry when creating invoices directly (not via e-commerce)
 5. Consider adding a separate `input_carrier_num` field for user input before issuing invoice
-6. **BUG-005 Fix (CRITICAL):** Fix parameter name mismatch in `ecpay_invoice_website`:
-   - Option A: Change JS `e_type` to `invoice_type` in `invoice.js:271`
-   - Option B: Change controller to use `kwargs.get('e_type')` in `main.py:39`
-7. Add carrier number input field in website checkout template when mobile barcode or natural person cert is selected
-8. Add lovecode input field in website checkout template when donation is selected
+6. Add carrier number input field in website checkout template when mobile barcode or natural person cert is selected
+7. Add lovecode input field in website checkout template when donation is selected
