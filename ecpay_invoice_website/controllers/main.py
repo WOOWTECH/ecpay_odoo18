@@ -36,13 +36,15 @@ class EcpayInvoiceController(http.Controller):
             res['ec_donate_number'] = kwargs['LoveCode']
         # 情況4：不列印也不捐贈，只使用載具
         elif not kwargs.get('print_flag') and not kwargs.get('donate_flag'):
-            if kwargs['invoice_type'] == '0':
+            # Convert to string for comparison (JS may send int or string)
+            invoice_type = str(kwargs.get('invoice_type', '0'))
+            if invoice_type == '0':
                 res['ec_carrier_type'] = ''
             else:
-                res['ec_carrier_type'] = kwargs['invoice_type']
+                res['ec_carrier_type'] = invoice_type
 
-            if kwargs['invoice_type'] == '2' or kwargs['invoice_type'] == '3':
-                res['ec_carrier_number'] = kwargs['CarrierNum']
+            if invoice_type == '2' or invoice_type == '3':
+                res['ec_carrier_number'] = kwargs.get('CarrierNum', '')
             else:
                 res['ec_carrier_number'] = ''
         else:

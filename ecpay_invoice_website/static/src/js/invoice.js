@@ -268,7 +268,7 @@ odoo.define('ecpay_invoice_tw.checkout', function (require) {
                     route,
                     params: {
                         invoiceType,
-                        e_type: sharedDataset.eType,
+                        invoice_type: sharedDataset.eType,
                         CarrierNum: sharedDataset.carrierNum,
                     }
                 });
@@ -311,6 +311,7 @@ odoo.define('ecpay_invoice_tw.checkout', function (require) {
                     route,
                     params: {
                         invoiceType,
+                        donate_flag: true,
                         LoveCode: sharedDataset.loveCode,
                     }
                 });
