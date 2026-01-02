@@ -1,13 +1,28 @@
 # -*- coding: utf-8 -*-
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+# Migrated from Odoo 16.0 to 18.0
 import logging
 
+from odoo import http
+from odoo.http import request
 from odoo.addons.payment.controllers import portal as payment_portal
 
 _logger = logging.getLogger(__name__)
 
 
+class ECPayPaymentController(http.Controller):
+    """ECPay-specific payment controller for saving payment method selection."""
+
+    @http.route('/payment/ecpay/save_payment_type', type='json', methods=['POST'], auth="public")
+    def save_payment_type(self, payment_type='Credit', **kwargs):
+        """Save ECPay payment type to session for use during transaction creation."""
+        request.session['ecpay_payment_type'] = payment_type
+        _logger.info(f'ECPay: Saved payment type to session: {payment_type}')
+        return '200'
+
+
 class PaymentPortal(payment_portal.PaymentPortal):
+
     def _create_transaction(
             self, provider_id, payment_method_id, token_id, amount, currency_id, partner_id, flow,
             tokenization_requested, landing_route, reference_prefix=None, is_validation=False,
@@ -49,8 +64,10 @@ class PaymentPortal(payment_portal.PaymentPortal):
         )
 
         # Handle ECPay-specific payment type selection
-        payment_type = kwargs.get('payment_type')
+        # Read from session (saved via /payment/ecpay/save_payment_type route)
+        payment_type = request.session.get('ecpay_payment_type', 'Credit')
         if payment_type and tx_sudo.provider_code == 'ECPay':
             tx_sudo.payment_method = payment_type
+            _logger.info(f'ECPay: Set payment method to {payment_type} for transaction {tx_sudo.reference}')
 
         return tx_sudo
