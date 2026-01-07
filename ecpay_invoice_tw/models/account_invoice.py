@@ -31,17 +31,25 @@ class AccountMove(models.Model):
     show_create_invoice = fields.Boolean(string='控制是否顯示串接電子發票', compute='get_access_invoce_mode')
     show_hand_in_field = fields.Boolean(string='控制是否顯示手動填入的選項', compute='get_access_invoce_mode')
 
-    is_donation = fields.Boolean(string='是否捐贈發票', readonly=True, copy=False)
-    is_print = fields.Boolean(string='是否索取紙本發票', readonly=True, copy=False)
+    # BUG-002, BUG-011: Removed readonly to allow user input
+    is_donation = fields.Boolean(string='是否捐贈發票', copy=False)
+    is_print = fields.Boolean(string='是否索取紙本發票', copy=False)
 
     carrierType = fields.Selection(selection=[('1', '綠界科技電子發票載具'), ('2', '自然人憑證'), ('3', '手機條碼')],
                                    string='載具類別')
 
-    lovecode = fields.Char(string='捐贈碼', readonly=True, copy=False)
+    # BUG-013: Removed readonly to allow user input
+    lovecode = fields.Char(string='捐贈碼', copy=False)
+    # BUG-001, BUG-010: carrierNum is related field showing ECPay value after issuance
+    # Keep it readonly for display, add input_carrier_num for user input
     carrierNum = fields.Char(string='載具號碼', related='ecpay_invoice_id.IIS_Carrier_Num', readonly=True, copy=False)
-    ecpay_CustomerIdentifier = fields.Char(string='統一編號', readonly=True, copy=False)
-    ec_print_address = fields.Char(string='發票寄送地址', readonly=True, copy=False)
-    ec_ident_name = fields.Char(string='發票抬頭', readonly=True, copy=False)
+    # New input field for carrier number before invoice issuance
+    input_carrier_num = fields.Char(string='輸入載具號碼', copy=False,
+                                    help='輸入載具號碼（自然人憑證或手機條碼）')
+    # BUG-013: Removed readonly to allow user input
+    ecpay_CustomerIdentifier = fields.Char(string='統一編號', copy=False)
+    ec_print_address = fields.Char(string='發票寄送地址', copy=False)
+    ec_ident_name = fields.Char(string='發票抬頭', copy=False)
 
     is_refund = fields.Boolean(string='是否為折讓', readonly=True)
     refund_finish = fields.Boolean(string='折讓完成', readonly=True)
@@ -59,14 +67,22 @@ class AccountMove(models.Model):
 
     @api.onchange('is_print', 'carrierType')
     def set_carrierType_false(self):
-        if self.is_print is True and self.carrierType is not False:
+        # BUG-009: Fixed boolean comparison (is True -> == True, is not False -> != False)
+        if self.is_print == True and self.carrierType != False:
             self.carrierType = False
-            self.carrierNum = False
+            self.input_carrier_num = False
 
     @api.onchange('is_donation')
     def set_is_print_false(self):
-        if self.is_donation is True:
+        # BUG-009: Fixed boolean comparison
+        if self.is_donation == True:
             self.is_print = False
+
+    @api.onchange('carrierType')
+    def _onchange_carrier_type(self):
+        """Clear carrier number input when carrier type changes or is cleared"""
+        if not self.carrierType or self.carrierType == '1':
+            self.input_carrier_num = False
 
     # 控制是否顯示手動開立的按鈕
     @api.depends('ecpay_invoice_id', 'IA_Invoice_No', 'III_Invoice_No')
@@ -165,23 +181,25 @@ class AccountMove(models.Model):
         if self.move_type != 'out_invoice':
             raise UserError('檢查發票邏輯的應收憑單類型應該為客戶應收憑單')
 
-        if self.is_print is True and self.is_donation is True:
+        # BUG-009: Fixed boolean comparisons (is -> ==)
+        if self.is_print == True and self.is_donation == True:
             raise UserError('列印發票與捐贈發票不能同時勾選！！')
-        elif self.is_print is True and self.carrierType is not False:
+        elif self.is_print == True and self.carrierType:
             raise UserError('列印發票時，不能夠選擇發票載具！！')
-        elif self.is_print is False and self.carrierType in ['2', '3'] and self.is_donation is False:
-            if self.carrierNum is False:
+        elif not self.is_print and self.carrierType in ['2', '3'] and not self.is_donation:
+            # BUG-001: Use input_carrier_num for validation instead of readonly carrierNum
+            if not self.input_carrier_num:
                 raise UserError('請輸入發票載具號碼！！')
             elif self.carrierType == '3':
-                if not self.check_carrier_num(self.carrierNum):
+                if not self.check_carrier_num(self.input_carrier_num):
                     raise UserError('手機載具不存在！！')
 
-        if self.is_donation is True and self.lovecode is not False:
+        if self.is_donation == True and self.lovecode:
             if not self.check_lovecode(self.lovecode):
                 raise UserError('愛心碼不存在！！')
 
         # 檢查客戶地址
-        if self.ec_print_address is False and self.partner_id.street is False:
+        if not self.ec_print_address and not self.partner_id.street:
             raise UserError('請到客戶資料中輸入客戶地址或在當前頁面輸入發票寄送地址！')
 
     # 產生電子發票
@@ -238,13 +256,15 @@ class AccountMove(models.Model):
         # 加入是否捐贈，是否列印，與發票載具的設定
         if self.is_print or self.ecpay_CustomerIdentifier:
             invoice.Send['Print'] = '1'
-        if self.is_donation is True:
+        # BUG-009: Fixed boolean comparison
+        if self.is_donation == True:
             invoice.Send['Donation'] = '1'
             invoice.Send['LoveCode'] = self.lovecode
-        if self.carrierType is not False:
+        if self.carrierType:
             invoice.Send['CarrierType'] = self.carrierType
-            if self.carrierNum is not False and invoice.Send['CarrierType'] in ['2', '3']:
-                invoice.Send['carrierNum'] = self.carrierNum
+            # BUG-001: Use input_carrier_num for API call
+            if self.input_carrier_num and invoice.Send['CarrierType'] in ['2', '3']:
+                invoice.Send['carrierNum'] = self.input_carrier_num
 
         # 送出資訊
         aReturn_Info = invoice.Check_Out()
@@ -326,7 +346,8 @@ class AccountMove(models.Model):
             raise UserError('折讓電子發票的應收憑單類型應該為客戶折讓單')
 
         # 檢查欲折讓的發票是否有被設定
-        if self.ecpay_invoice_id.id is False:
+        # BUG-009: Fixed boolean comparison
+        if not self.ecpay_invoice_id:
             raise UserError('找不到欲折讓的發票！')
 
         # 建立物件

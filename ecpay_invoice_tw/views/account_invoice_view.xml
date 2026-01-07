@@ -36,14 +36,21 @@
                                 <field name="ecpay_tax_type"/>
                             </group>
                             <group>
-                                <field name="is_donation"/>
-                                <field name="lovecode"/>
-                                <field name="is_print"/>
-                                <field name="ec_print_address"/>
-                                <field name="ecpay_CustomerIdentifier"/>
-                                <field name="ec_ident_name"/>
-                                <field name="carrierType"/>
-                                <field name="carrierNum"/>
+                                <!-- BUG-002, BUG-011: Fields editable before invoice issuance -->
+                                <field name="is_donation" readonly="uniform_state != 'to invoice'"/>
+                                <field name="lovecode" readonly="uniform_state != 'to invoice'"
+                                       invisible="not is_donation"/>
+                                <field name="is_print" readonly="uniform_state != 'to invoice'"/>
+                                <field name="ec_print_address" readonly="uniform_state != 'to invoice'"
+                                       invisible="not is_print"/>
+                                <field name="ecpay_CustomerIdentifier" readonly="uniform_state != 'to invoice'"/>
+                                <field name="ec_ident_name" readonly="uniform_state != 'to invoice'"/>
+                                <field name="carrierType" readonly="uniform_state != 'to invoice'"/>
+                                <!-- BUG-001: New input field for carrier number -->
+                                <field name="input_carrier_num" readonly="uniform_state != 'to invoice'"
+                                       invisible="carrierType not in ['2', '3']"/>
+                                <!-- Display ECPay-assigned carrier number after issuance -->
+                                <field name="carrierNum" invisible="uniform_state == 'to invoice'"/>
                             </group>
                         </group>
                         <group string="綠界發票折讓">
