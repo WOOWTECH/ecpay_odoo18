@@ -29,7 +29,8 @@ class EcpayInvoiceSaleOrder(models.Model):
             'ec_print_address': self.ec_print_address,
             'ec_ident_name': self.ec_ident_name,
             'carrierType': self.ec_carrier_type,
-            'carrierNum': self.ec_carrier_number,
+            # Issue #4: Use input_carrier_num for user input (carrierNum is now a related field)
+            'input_carrier_num': self.ec_carrier_number,
         })
 
         return res
