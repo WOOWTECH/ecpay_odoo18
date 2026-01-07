@@ -2,10 +2,10 @@
 name: ecpay-odoo18-compliance
 status: backlog
 created: 2026-01-07T00:54:13Z
-updated: 2026-01-07T01:25:46Z
+updated: 2026-01-07T01:45:08Z
 progress: 0%
 prd: .claude/prds/ecpay-odoo18-compliance.md
-github: [Will be updated when synced to GitHub]
+github: https://github.com/WOOWTECH/ecpay_odoo18/issues/1
 ---
 
 # Epic: ECPay Odoo 18 Full Compliance & Production Readiness
@@ -432,3 +432,54 @@ For each bug fix task (Tasks 1-5), execute:
   - Boolean field handling
   - Proper `super()` binding
 - Use these patterns as reference for new code
+
+## Tasks Created
+
+| # | Issue | Title | Parallel | Dependencies |
+|---|-------|-------|----------|--------------|
+| 1 | [#2](https://github.com/WOOWTECH/ecpay_odoo18/issues/2) | Fix BUG-007 Settings Page KeyError | false | none |
+| 2 | [#3](https://github.com/WOOWTECH/ecpay_odoo18/issues/3) | Fix Readonly Fields on Invoice Form | false | #2 |
+| 3 | [#4](https://github.com/WOOWTECH/ecpay_odoo18/issues/4) | Add Checkout Input Fields for Carrier and Lovecode | false | #3 |
+| 4 | [#5](https://github.com/WOOWTECH/ecpay_odoo18/issues/5) | Python Code Compliance Fixes | true | #2 |
+| 5 | [#6](https://github.com/WOOWTECH/ecpay_odoo18/issues/6) | JavaScript Compliance Fixes | true | #4 |
+| 6 | [#7](https://github.com/WOOWTECH/ecpay_odoo18/issues/7) | Unit Tests for New Functionality | true | #3, #4, #5 |
+| 7 | [#8](https://github.com/WOOWTECH/ecpay_odoo18/issues/8) | Full Integration Testing with Playwright | false | #2-#7 |
+| 8 | [#9](https://github.com/WOOWTECH/ecpay_odoo18/issues/9) | Update User Guide Documentation | false | #8 |
+
+### Task Summary
+- **Total tasks:** 8
+- **Parallel tasks:** 3 (Issues #5, #6, #7 can run concurrently)
+- **Sequential tasks:** 5
+- **Estimated total effort:** 27-41 hours
+
+### Task Dependency Graph
+```
+#2 (BUG-007 Fix) ─────┬──→ #3 (Readonly) ──→ #4 (Checkout)
+                      │                             │
+                      └──→ #5 (Python) ─────────────┤
+                                                    │
+                                #6 (JS) ←───────────┤
+                                                    │
+                      #7 (Tests) ←──────────────────┘
+                            │
+                            ▼
+                      #8 (Integration Testing)
+                            │
+                            ▼
+                      #9 (Documentation)
+```
+
+### Bugs to Task Mapping
+| Bug | Issue | Status |
+|-----|-------|--------|
+| BUG-001 | #3 | ⬜ Open |
+| BUG-002 | #3 | ⬜ Open |
+| BUG-007 | #2 | ⬜ Open |
+| BUG-008 | #5 | ⬜ Open |
+| BUG-009 | #5 | ⬜ Open |
+| BUG-010 | #3 | ⬜ Open |
+| BUG-011 | #3 | ⬜ Open |
+| BUG-012 | #5 | ⬜ Open |
+| BUG-013 | #3 | ⬜ Open |
+| BUG-014 | #6 | ⬜ Open |
+| BUG-015 | #5 | ⬜ Open |
