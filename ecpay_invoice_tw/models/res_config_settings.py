@@ -15,3 +15,11 @@ class EcpayInvocieResConfigSettings(models.TransientModel):
                                     selection=[('manual', '手動'), ('automatic', '自動'), ('hand in', '人工填入')],
                                     related='company_id.auto_invoice', readonly=False)
     seller_Identifier = fields.Char(string='賣方統編', related='company_id.seller_Identifier', readonly=False)
+
+    # Technical field to prevent KeyError when MRP module is not installed
+    # Some parent views in the inheritance chain reference this field
+    group_mrp_routings = fields.Boolean(
+        string="MRP Routings",
+        implied_group='mrp.group_mrp_routings',
+        help="Technical field for optional MRP module compatibility"
+    )
