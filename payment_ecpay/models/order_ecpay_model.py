@@ -72,7 +72,8 @@ class OrderEcpayModel(models.Model):
 
         create_data = False
         for sale_order_id in transaction.sale_order_ids:
-            pattern = [(1, order.id, info_data)] if any(order) else [(0, 0, info_data)]
+            # BUG-015: Fixed any() on recordset (use truthiness check instead)
+            pattern = [(1, order.id, info_data)] if order else [(0, 0, info_data)]
             sale_order_id.ecpay_info_ids = pattern
             create_data = True
         return create_data

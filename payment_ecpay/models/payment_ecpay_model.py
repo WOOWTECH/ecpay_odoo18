@@ -18,6 +18,8 @@ class ECPayCreditLimit(models.Model):
     name = fields.Char(string='期數')
 
     # Odoo 18: name_get is deprecated, use display_name compute instead
+    # BUG-008: Added @api.depends decorator
+    @api.depends('name')
     def _compute_display_name(self):
         for record in self:
             record.display_name = record.name or ''

@@ -196,10 +196,11 @@ class BasePayment(object):
 
     # 檢查必填參數
     # 檢查 merge.dict 是否有填正確的值或範圍
+    # BUG-012: Fixed type comparison (is -> ==)
     def check_required_parameter(self, parameters, patterns):
         for patten in patterns:
             for k, v in patten.items():
-                if v.get('required') and (v.get('type') is str):
+                if v.get('required') and (v.get('type') == str):
                     if parameters.get(k) is None:
                         raise Exception('parameter %s is required.' % k)
                     elif len(parameters.get(k)) == 0:
@@ -207,17 +208,18 @@ class BasePayment(object):
                     elif len(parameters.get(k)) > v.get('max', Decimal('Infinity')):
                         raise Exception('%s max langth is %d.' %
                                         (k, v.get('max', Decimal('Infinity'))))
-                elif v.get('required') and (v.get('type') is int):
+                elif v.get('required') and (v.get('type') == int):
                     if parameters.get(k) is None:
                         raise Exception('parameter %s is required.' % k)
 
     # 先用 required.dict 設定預設值並產生新 new.required.dict
+    # BUG-012: Fixed type comparison (is -> ==)
     def create_default_dict(self, parameters):
         default_dict = dict()
         for k, v in parameters.items():
-            if v['type'] is str:
+            if v['type'] == str:
                 default_dict.setdefault(k, '')
-            elif v['type'] is int:
+            elif v['type'] == int:
                 default_dict.setdefault(k, -1)
             else:
                 raise Exception('unsupported type!')
@@ -227,15 +229,16 @@ class BasePayment(object):
         return default_dict
 
     # 將 merge.dict 內的無用參數消除
+    # BUG-009, BUG-012: Fixed boolean and type comparisons
     def filter_parameter(self, parameters, pattern):
         for patten in pattern:
             for k, v in patten.items():
-                if (v.get('required') is False) and (v.get('type') is str):
+                if (not v.get('required')) and (v.get('type') == str):
                     if parameters.get(k) is None:
                         continue
                     if len(parameters.get(k)) == 0:
                         del parameters[k]
-                elif (v.get('required') is False) and (v.get('type') is int):
+                elif (not v.get('required')) and (v.get('type') == int):
                     if parameters.get(k) is None:
                         continue
                     if parameters.get(k) < 0:

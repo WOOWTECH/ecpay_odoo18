@@ -67,15 +67,15 @@ class AccountMove(models.Model):
 
     @api.onchange('is_print', 'carrierType')
     def set_carrierType_false(self):
-        # BUG-009: Fixed boolean comparison (is True -> == True, is not False -> != False)
-        if self.is_print == True and self.carrierType != False:
+        # BUG-009: Fixed boolean comparison (use truthiness checks)
+        if self.is_print and self.carrierType:
             self.carrierType = False
             self.input_carrier_num = False
 
     @api.onchange('is_donation')
     def set_is_print_false(self):
-        # BUG-009: Fixed boolean comparison
-        if self.is_donation == True:
+        # BUG-009: Fixed boolean comparison (use truthiness check)
+        if self.is_donation:
             self.is_print = False
 
     @api.onchange('carrierType')
@@ -181,10 +181,10 @@ class AccountMove(models.Model):
         if self.move_type != 'out_invoice':
             raise UserError('檢查發票邏輯的應收憑單類型應該為客戶應收憑單')
 
-        # BUG-009: Fixed boolean comparisons (is -> ==)
-        if self.is_print == True and self.is_donation == True:
+        # BUG-009: Fixed boolean comparisons (use truthiness checks)
+        if self.is_print and self.is_donation:
             raise UserError('列印發票與捐贈發票不能同時勾選！！')
-        elif self.is_print == True and self.carrierType:
+        elif self.is_print and self.carrierType:
             raise UserError('列印發票時，不能夠選擇發票載具！！')
         elif not self.is_print and self.carrierType in ['2', '3'] and not self.is_donation:
             # BUG-001: Use input_carrier_num for validation instead of readonly carrierNum
@@ -194,7 +194,7 @@ class AccountMove(models.Model):
                 if not self.check_carrier_num(self.input_carrier_num):
                     raise UserError('手機載具不存在！！')
 
-        if self.is_donation == True and self.lovecode:
+        if self.is_donation and self.lovecode:
             if not self.check_lovecode(self.lovecode):
                 raise UserError('愛心碼不存在！！')
 
@@ -256,8 +256,8 @@ class AccountMove(models.Model):
         # 加入是否捐贈，是否列印，與發票載具的設定
         if self.is_print or self.ecpay_CustomerIdentifier:
             invoice.Send['Print'] = '1'
-        # BUG-009: Fixed boolean comparison
-        if self.is_donation == True:
+        # BUG-009: Fixed boolean comparison (use truthiness check)
+        if self.is_donation:
             invoice.Send['Donation'] = '1'
             invoice.Send['LoveCode'] = self.lovecode
         if self.carrierType:

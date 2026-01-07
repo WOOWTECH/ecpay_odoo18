@@ -221,7 +221,8 @@ class PaymentTransaction(models.Model):
         # 將 POST data 計算驗證是否相符
         if CheckMacValue == ecpay_payment_sdk.generate_check_value(post):
             s = self.search([("reference", "=", post.get("CustomField1", ""))], limit=1)
-            return s.provider_id.state if any(s) else ""
+            # BUG-015: Fixed any() on recordset (use truthiness check instead)
+            return s.provider_id.state if s else ""
         else:
             error_msg = _("Ecpay: CheckMacValue is not correct")
             _logger.info(error_msg)

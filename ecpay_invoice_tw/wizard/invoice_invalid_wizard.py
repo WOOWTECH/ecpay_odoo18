@@ -18,7 +18,8 @@ class InvoiceInvalidWizard(models.TransientModel):
         # 取得欲作廢的折讓單
         refund = self.env['account.move'].browse(self._context.get('active_id'))
         # 若有折讓單，進行檢查是否有折讓號碼
-        if refund.IA_Allow_No is False:
+        # BUG-009: Fixed boolean comparison (is False -> not)
+        if not refund.IA_Allow_No:
             raise UserError('找不到折讓單號或是發票折讓單號!!')
 
         # 建立物件
