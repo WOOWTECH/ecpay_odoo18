@@ -2,7 +2,7 @@
 name: ecpay-odoo18-compliance
 status: backlog
 created: 2026-01-07T00:54:13Z
-updated: 2026-01-07T01:07:42Z
+updated: 2026-01-07T01:19:07Z
 progress: 0%
 prd: .claude/prds/ecpay-odoo18-compliance.md
 github: [Will be updated when synced to GitHub]
@@ -38,6 +38,130 @@ An architect review identified **8 additional bugs** beyond the 3 originally doc
 | BUG-015 | Low | payment_ecpay | `any()` usage on recordset deprecated |
 
 **Note:** BUG-010/011 are the same root cause as BUG-001/002 but identified at different code locations. BUG-013 expands the scope of readonly field issues.
+
+## Bug Resolution Process (MANDATORY)
+
+**CRITICAL:** Every bug fix MUST strictly follow this 6-step process to ensure 100% resolution:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        BUG RESOLUTION PROCESS                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  Step 1: DEEP RESEARCH                                                      │
+│  ├── Read Odoo 18 architecture reference                                    │
+│  │   Path: /mnt/c/Users/Matt/Desktop/CLAUDE專案/ODOO相關/                   │
+│  │         Odoo_18_Environment_Architecture                                 │
+│  ├── Trace the bug to its root cause                                        │
+│  ├── Identify all affected files and code paths                             │
+│  └── Document findings in bug analysis                                      │
+│                                                                             │
+│  Step 2: CREATE FIX PLAN                                                    │
+│  ├── Write detailed fix plan with specific code changes                     │
+│  ├── Identify potential side effects                                        │
+│  ├── List all files to modify                                               │
+│  └── Define rollback strategy                                               │
+│                                                                             │
+│  Step 3: REVIEW FIX PLAN                                                    │
+│  ├── Validate against Odoo 18 best practices                                │
+│  ├── Check for conflicts with other bugs                                    │
+│  ├── Ensure minimal code changes                                            │
+│  └── Get confirmation before proceeding                                     │
+│                                                                             │
+│  Step 4: IMPLEMENT FIX                                                      │
+│  ├── Apply code changes                                                     │
+│  ├── Commit with descriptive message                                        │
+│  ├── Reference bug ID in commit                                             │
+│  └── Push to repository                                                     │
+│                                                                             │
+│  Step 5: DEPLOY TEST (Playwright MCP - Headed Mode)                         │
+│  ├── Deploy to test Odoo instance                                           │
+│  ├── Run automated UI tests with Playwright                                 │
+│  ├── Verify bug is fixed                                                    │
+│  ├── Check for regressions                                                  │
+│  └── Document test results                                                  │
+│                                                                             │
+│  Step 6: ROLLBACK IF FAILED                                                 │
+│  ├── If deploy test fails → immediate rollback                              │
+│  ├── Revert commit(s)                                                       │
+│  ├── Document failure reason                                                │
+│  └── Return to Step 1 with new insights                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Process Details
+
+#### Step 1: Deep Research
+```bash
+# Reference architecture documentation
+ODOO_ARCH_REF="/mnt/c/Users/Matt/Desktop/CLAUDE專案/ODOO相關/Odoo_18_Environment_Architecture"
+
+# Required research for each bug:
+# 1. Read relevant architecture docs
+# 2. Grep for related patterns in codebase
+# 3. Check Odoo 18 source if needed
+# 4. Document root cause analysis
+```
+
+#### Step 2: Create Fix Plan
+Each fix plan must include:
+- **Root Cause**: Exact reason for the bug
+- **Solution**: Specific code changes
+- **Files Modified**: List of all files
+- **Side Effects**: Potential impacts
+- **Rollback Plan**: How to revert if needed
+
+#### Step 3: Review Fix Plan
+Checklist before implementation:
+- [ ] Follows Odoo 18 patterns from architecture reference
+- [ ] No conflicts with other bug fixes
+- [ ] Minimal invasive changes
+- [ ] Backward compatible (if applicable)
+
+#### Step 4: Implement Fix
+```bash
+# Commit format
+git commit -m "Fix BUG-XXX: [Brief description]
+
+- Root cause: [explanation]
+- Solution: [what was changed]
+- Files: [list of modified files]
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+```
+
+#### Step 5: Deploy Test with Playwright MCP
+```javascript
+// Use Playwright MCP in HEADED mode for visual verification
+// Test URL: https://woowtech-odoo.woowtech.io
+
+// Required test scenarios per bug:
+// 1. Direct bug reproduction test
+// 2. Related functionality regression test
+// 3. Screenshot capture for documentation
+```
+
+#### Step 6: Rollback Protocol
+```bash
+# If test fails:
+git revert HEAD  # Revert last commit
+git push origin main
+
+# Document failure:
+# - What test failed
+# - Why the fix didn't work
+# - New insights for next attempt
+```
+
+### Odoo 18 Architecture Reference
+
+**Location:** `/mnt/c/Users/Matt/Desktop/CLAUDE專案/ODOO相關/Odoo_18_Environment_Architecture`
+
+Use this reference for:
+- Correct field definitions and decorators
+- View inheritance patterns
+- JavaScript module syntax
+- Controller patterns
+- Security model patterns
 
 ## Architecture Decisions
 
@@ -152,16 +276,61 @@ _updateCarrierInput() {
 
 ## Task Breakdown
 
-| # | Task | Priority | Scope | Bugs Addressed | Estimated Effort |
-|---|------|----------|-------|----------------|------------------|
-| 1 | Fix BUG-007: Settings Page KeyError | Critical | ecpay_invoice_tw | BUG-007 | 2-4 hours |
-| 2 | Fix Readonly Fields (Invoice Form) | High | ecpay_invoice_tw | BUG-001, BUG-002, BUG-010, BUG-011, BUG-013 | 4-6 hours |
-| 3 | Add Checkout Input Fields (Carrier + Lovecode) | High | ecpay_invoice_website | BUG-014 (partial) | 4-6 hours |
-| 4 | Python Code Compliance Fixes | Medium | All modules | BUG-008, BUG-009, BUG-012, BUG-015 | 3-4 hours |
-| 5 | JavaScript Compliance Fixes | Medium | ecpay_invoice_website | BUG-014 | 2-3 hours |
-| 6 | Unit Tests for New Functionality | High | ecpay_invoice_tw | - | 3-4 hours |
-| 7 | Manual Integration Testing | High | All modules | All bugs verification | 4-6 hours |
-| 8 | Update User Guide Documentation | Medium | Documentation | - | 2-3 hours |
+Each task follows the **6-Step Bug Resolution Process** defined above.
+
+| # | Task | Priority | Scope | Bugs Addressed | Process Steps |
+|---|------|----------|-------|----------------|---------------|
+| 1 | Fix BUG-007: Settings Page KeyError | Critical | ecpay_invoice_tw | BUG-007 | Research → Plan → Review → Implement → Test → Verify |
+| 2 | Fix Readonly Fields (Invoice Form) | High | ecpay_invoice_tw | BUG-001, BUG-002, BUG-010, BUG-011, BUG-013 | Research → Plan → Review → Implement → Test → Verify |
+| 3 | Add Checkout Input Fields (Carrier + Lovecode) | High | ecpay_invoice_website | BUG-014 (partial) | Research → Plan → Review → Implement → Test → Verify |
+| 4 | Python Code Compliance Fixes | Medium | All modules | BUG-008, BUG-009, BUG-012, BUG-015 | Research → Plan → Review → Implement → Test → Verify |
+| 5 | JavaScript Compliance Fixes | Medium | ecpay_invoice_website | BUG-014 | Research → Plan → Review → Implement → Test → Verify |
+| 6 | Unit Tests for New Functionality | High | ecpay_invoice_tw | - | Implement → Test |
+| 7 | Full Integration Testing (Playwright) | High | All modules | All bugs verification | Deploy Test → Document |
+| 8 | Update User Guide Documentation | Medium | Documentation | - | Document |
+
+### Task Execution Template
+
+For each bug fix task (Tasks 1-5), execute:
+
+```markdown
+## Task X: [Bug Description]
+
+### Step 1: Deep Research
+- [ ] Read Odoo 18 architecture reference
+- [ ] Trace root cause
+- [ ] Document affected files
+- [ ] Findings: [document here]
+
+### Step 2: Fix Plan
+- **Root Cause:** [explanation]
+- **Solution:** [specific changes]
+- **Files to Modify:** [list]
+- **Side Effects:** [potential impacts]
+- **Rollback:** `git revert [commit]`
+
+### Step 3: Review
+- [ ] Follows Odoo 18 patterns
+- [ ] No conflicts with other fixes
+- [ ] Minimal changes
+- [ ] Ready to implement
+
+### Step 4: Implementation
+- [ ] Code changes applied
+- [ ] Committed with message
+- [ ] Pushed to repository
+
+### Step 5: Deploy Test (Playwright MCP - Headed)
+- [ ] Navigate to test instance
+- [ ] Reproduce original bug scenario
+- [ ] Verify bug is fixed
+- [ ] Check for regressions
+- [ ] Screenshots captured
+
+### Step 6: Result
+- [ ] ✅ PASS - Bug resolved, move to next task
+- [ ] ❌ FAIL - Rollback and retry from Step 1
+```
 
 **Total Estimated Effort: 24-36 hours**
 
