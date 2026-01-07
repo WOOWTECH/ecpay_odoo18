@@ -2,6 +2,126 @@
 
 All notable changes to the ECPay Odoo 18 modules are documented in this file.
 
+## [18.0.1.1.0] - 2026-01-07
+
+### Overview
+
+This release fixes critical Odoo 18 compliance issues discovered during comprehensive testing. All field writability issues, Python compliance warnings, and JavaScript error handling have been resolved.
+
+**Epic:** ecpay-odoo18-compliance
+**Issues Fixed:** BUG-007 through BUG-015 (9 bugs total)
+
+---
+
+### ecpay_invoice_tw
+
+#### Fixed
+
+##### BUG-007: Settings Page KeyError
+- **File:** `models/res_config_settings.py`
+- **Issue:** Settings page crashed with `KeyError: 'ecpay_invoice_mode'`
+- **Root Cause:** Missing inverse method for computed field `ecpay_invoice_mode`
+- **Fix:** Added `_inverse_ecpay_invoice_mode()` method:
+  ```python
+  def _inverse_ecpay_invoice_mode(self):
+      self.env['ir.config_parameter'].sudo().set_param(
+          'ecpay_invoice.ecpay_invoice_mode',
+          self.ecpay_invoice_mode
+      )
+  ```
+
+##### BUG-008: Compute Method @api.depends Warning
+- **File:** `models/account_move.py`
+- **Issue:** Odoo 18 warning: "compute method should have @api.depends"
+- **Fix:** Added proper `@api.depends()` decorators to all compute methods
+
+##### BUG-009: Boolean Field Comparison
+- **File:** `models/account_move.py`
+- **Issue:** Using `== False` instead of `not` for boolean comparison
+- **Fix:** Changed boolean comparisons to use `not` operator:
+  ```python
+  # Before
+  if self.is_donation == False:
+  # After
+  if not self.is_donation:
+  ```
+
+##### BUG-010: Readonly Field `input_carrier_num`
+- **File:** `models/account_move.py`
+- **Issue:** Field `input_carrier_num` was readonly, preventing carrier number input
+- **Fix:** Removed `readonly=True` attribute from field definition
+
+##### BUG-011: Readonly Boolean Fields
+- **Files:** `models/account_move.py`, `views/account_move_view.xml`
+- **Issue:** `is_donation` and `is_print` fields were readonly in views
+- **Fix:** Removed `readonly="1"` from XML view definitions
+
+##### BUG-012: Type Comparison Using `is` Instead of `==`
+- **File:** `models/account_move.py`
+- **Issue:** Using `is` for type comparison (SyntaxWarning in Python 3.10+)
+- **Fix:** Changed to `==` for string/type comparisons
+
+##### BUG-013: Readonly Fields in ECPay Tab
+- **File:** `views/account_move_view.xml`
+- **Issue:** Fields `lovecode`, `ecpay_CustomerIdentifier`, `ec_ident_name` were readonly
+- **Fix:** Removed readonly attributes from all user-editable fields
+
+##### BUG-015: Recordset Iteration Warning
+- **File:** `models/account_move.py`
+- **Issue:** Iterating over single recordset without `ensure_one()`
+- **Fix:** Added `ensure_one()` calls where appropriate
+
+#### Added
+
+- Unit tests for field writability (`tests/test_account_move.py`)
+- Unit tests for sale order data flow (`tests/test_sale_order.py`)
+- 7 test classes covering all critical paths
+
+---
+
+### ecpay_invoice_website
+
+#### Fixed
+
+##### BUG-004: Checkout Input Fields Not Saving to Invoice
+- **File:** `models/sale_order.py`
+- **Issue:** Carrier number from checkout not transferred to invoice
+- **Root Cause:** `_prepare_invoice()` wrote to readonly `carrierNum` instead of `input_carrier_num`
+- **Fix:** Updated field mapping:
+  ```python
+  # Before (wrong field)
+  'carrierNum': self.ec_carrier_number,
+  # After (correct field)
+  'input_carrier_num': self.ec_carrier_number,
+  ```
+
+##### BUG-014: Error Dialog Not Working
+- **File:** `static/src/js/invoice.js`
+- **Issue:** Error dialogs not displaying on invalid carrier number
+- **Fix:** Updated error handling to use Odoo 18 dialog service
+
+---
+
+### Integration Testing Results
+
+All 11 bugs verified fixed via Playwright MCP testing:
+
+| Bug | Status | Verification |
+|-----|--------|--------------|
+| BUG-001 | ✅ FIXED | Carrier number editable |
+| BUG-002 | ✅ FIXED | Donation/print toggleable |
+| BUG-007 | ✅ FIXED | Settings page loads |
+| BUG-008 | ✅ FIXED | No compute warnings |
+| BUG-009 | ✅ FIXED | Boolean comparisons work |
+| BUG-010 | ✅ FIXED | input_carrier_num writable |
+| BUG-011 | ✅ FIXED | is_donation/is_print work |
+| BUG-012 | ✅ FIXED | Type comparisons work |
+| BUG-013 | ✅ FIXED | All fields writable |
+| BUG-014 | ✅ FIXED | Error dialogs work |
+| BUG-015 | ✅ FIXED | No recordset warnings |
+
+---
+
 ## [18.0.1.0.0] - 2026-01-02
 
 ### Overview

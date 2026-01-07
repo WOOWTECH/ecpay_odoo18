@@ -131,17 +131,40 @@ The module supports multiple carrier types for electronic invoices:
 
 ![Carrier Options](screenshots/08-carrier-options.png)
 
-| Carrier Type | Description |
-|--------------|-------------|
-| **綠界科技電子發票載具** | ECPay's own carrier (default) |
-| **消費者自然人憑證** | Natural Person Certificate |
-| **消費者手機條碼** | Mobile Barcode |
+| Carrier Type | Description | Carrier Number Format |
+|--------------|-------------|----------------------|
+| **綠界科技電子發票載具** | ECPay's own carrier (default) | Not required |
+| **消費者自然人憑證** | Natural Person Certificate | 16 characters: 2 uppercase letters + 14 digits (e.g., `AB12345678901234`) |
+| **消費者手機條碼** | Mobile Barcode | 8 characters: `/` + 7 alphanumeric characters (e.g., `/ABC+123`) |
+
+#### Carrier Number Input
+
+When selecting carrier type 2 (自然人憑證) or type 3 (手機條碼), a carrier number input field will appear:
+
+1. **自然人憑證 (Natural Person Certificate)**
+   - Format: 2 uppercase letters followed by 14 digits
+   - Example: `AB12345678901234`
+   - Total length: 16 characters
+
+2. **手機條碼 (Mobile Barcode)**
+   - Format: `/` followed by 7 characters (letters, numbers, `+`, `-`, `.`)
+   - Example: `/ABC+123` or `/-12.456`
+   - Total length: 8 characters
+   - The leading `/` is required
 
 #### Donation Invoices
 
 For donation invoices, select "捐贈" and enter the Love Code:
 
 ![Donation Invoice](screenshots/09-donation-invoice.png)
+
+**Love Code (愛心碼) Format:**
+- 3 to 7 digits
+- Common examples:
+  - `168` - Common charitable code
+  - `25885` - Social welfare organizations
+  - `919` - Cancer Foundation
+- Verify codes at: https://www.einvoice.nat.gov.tw/
 
 ---
 
@@ -273,6 +296,12 @@ Payment transactions are recorded with:
 
 ### Common Issues
 
+#### Settings Page Error (BUG-007 - Fixed in v18.0.1.1.0)
+
+**Problem:** Settings page crashes with `KeyError: 'ecpay_invoice_mode'`
+
+**Solution:** Update to version 18.0.1.1.0 or later. This was caused by a missing inverse method for the computed settings field.
+
 #### E-Invoice Not Issuing
 
 **Problem:** "開立發票" button doesn't work
@@ -285,6 +314,21 @@ Payment transactions are recorded with:
    tail -f /var/log/odoo/odoo.log | grep -i ecpay
    ```
 
+#### Cannot Enter Carrier Number (BUG-010 - Fixed in v18.0.1.1.0)
+
+**Problem:** Carrier number field is read-only
+
+**Solutions:**
+1. Update to version 18.0.1.1.0 or later
+2. Ensure you have selected carrier type 2 (自然人憑證) or 3 (手機條碼) first
+3. The field only appears when a carrier type requiring input is selected
+
+#### Cannot Toggle Donation/Print Options (BUG-011 - Fixed in v18.0.1.1.0)
+
+**Problem:** Checkboxes for donation and print invoice are read-only
+
+**Solution:** Update to version 18.0.1.1.0 or later. The readonly attributes have been removed from these fields.
+
 #### Payment Redirect Fails
 
 **Problem:** Payment doesn't redirect to ECPay
@@ -294,16 +338,26 @@ Payment transactions are recorded with:
 2. Check Hash Key/Hash IV configuration
 3. Ensure website URL is correct in ECPay merchant settings
 
-#### E-Invoice Options Not Saved
+#### E-Invoice Options Not Saved (BUG-004/005 - Fixed in v18.0.1.1.0)
 
-**Problem:** Carrier type not saved to order
+**Problem:** Carrier type or carrier number not saved to order/invoice
 
 **Solutions:**
-1. Clear browser cache (Ctrl+Shift+R)
-2. Check browser console for JavaScript errors
-3. Verify `ecpay_invoice_website` module is installed
+1. Update to version 18.0.1.1.0 or later
+2. Clear browser cache (Ctrl+Shift+R)
+3. Check browser console for JavaScript errors
+4. Verify `ecpay_invoice_website` module is installed
 
-#### Credit Note Error
+#### Invalid Carrier Number Error
+
+**Problem:** "載具號碼錯誤" error at checkout
+
+**Solutions:**
+1. **Mobile Barcode (手機條碼):** Must start with `/` and be exactly 8 characters (e.g., `/ABC+123`)
+2. **Natural Person (自然人憑證):** Must be 16 characters - 2 letters + 14 digits (e.g., `AB12345678901234`)
+3. Check for extra spaces before or after the carrier number
+
+#### Credit Note Error (BUG-003/004 - Fixed in v18.0.1.0.0)
 
 **Problem:** Error when creating credit note
 
@@ -352,6 +406,11 @@ tail -f /var/log/odoo/odoo.log | grep -i "ecpay"
 ---
 
 ## Version History
+
+| Version | Date | Description |
+|---------|------|-------------|
+| 18.0.1.1.0 | 2026-01-07 | Odoo 18 compliance fixes (BUG-007 to BUG-015) |
+| 18.0.1.0.0 | 2026-01-02 | Initial Odoo 18 migration (BUG-003 to BUG-006) |
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
