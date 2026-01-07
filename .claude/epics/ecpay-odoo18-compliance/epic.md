@@ -2,7 +2,7 @@
 name: ecpay-odoo18-compliance
 status: backlog
 created: 2026-01-07T00:54:13Z
-updated: 2026-01-07T01:19:07Z
+updated: 2026-01-07T01:25:46Z
 progress: 0%
 prd: .claude/prds/ecpay-odoo18-compliance.md
 github: [Will be updated when synced to GitHub]
@@ -132,7 +132,8 @@ git commit -m "Fix BUG-XXX: [Brief description]
 #### Step 5: Deploy Test with Playwright MCP
 ```javascript
 // Use Playwright MCP in HEADED mode for visual verification
-// Test URL: https://woowtech-odoo.woowtech.io
+// Test Instance: https://matt-test-254-odoo.woowtech.io/
+// Login: admin / admin
 
 // Required test scenarios per bug:
 // 1. Direct bug reproduction test
@@ -321,7 +322,8 @@ For each bug fix task (Tasks 1-5), execute:
 - [ ] Pushed to repository
 
 ### Step 5: Deploy Test (Playwright MCP - Headed)
-- [ ] Navigate to test instance
+- [ ] Navigate to https://matt-test-254-odoo.woowtech.io/
+- [ ] Login with admin / admin
 - [ ] Reproduce original bug scenario
 - [ ] Verify bug is fixed
 - [ ] Check for regressions
@@ -353,7 +355,10 @@ For each bug fix task (Tasks 1-5), execute:
 ## Dependencies
 
 ### Prerequisites
-- Access to live Odoo 18 test instance (woowtech-odoo.woowtech.io)
+- Access to live Odoo 18 test instance
+  - **URL:** https://matt-test-254-odoo.woowtech.io/
+  - **Username:** admin
+  - **Password:** admin
 - ECPay sandbox credentials (already configured)
 - Browser for testing (Chrome recommended)
 
