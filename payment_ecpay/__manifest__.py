@@ -6,7 +6,7 @@
     "name": "ECPay 綠界第三方金流模組",
     "category": "Accounting/Payment Providers",
     "summary": "Payment Provider: ECPay 綠界第三方金流模組",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "description": """ECPay 綠界第三方金流模組 - Taiwan Payment Gateway Integration""",
     'author': 'ECPAY',
     'website': 'http://www.ecpay.com.tw',

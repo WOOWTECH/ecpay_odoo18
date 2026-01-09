@@ -3,7 +3,7 @@
 # Migrated from Odoo 16.0 to 18.0
 {
     'name': 'ECPay 綠界第三方電子發票模組',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Accounting/Localizations',
     'author': 'ECPAY',
     'website': 'http://www.ecpay.com.tw',
