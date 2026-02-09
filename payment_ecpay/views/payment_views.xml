@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Migrated from Odoo 16.0 to 18.0 -->
+<!-- Note: attrs is deprecated in Odoo 17+, use invisible attribute directly -->
+<odoo>
+    <data>
+
+        <record id="provider_form_ecpay" model="ir.ui.view">
+            <field name="name">provider.form.ecpay</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='provider_credentials']" position="inside">
+                    <group invisible="code != 'ECPay'">
+                        <group name="group_interface_setting" string="介接設定">
+                            <field name="MerchantID"/>
+                            <field name="HashKey" password="True"/>
+                            <field name="HashIV" password="True"/>
+                        </group>
+                    </group>
+                    <group invisible="code != 'ECPay'">
+                        <group name="group_domain_setting" string="網域設定">
+                            <field name="ecpay_domain"/>
+                        </group>
+                    </group>
+                    <group name="group_payment_method" string="信用卡付款方式設定"
+                           invisible="code != 'ECPay'">
+                        <group name="ecpay_credit_setting">
+                            <field name="ecpay_credit" class="oe_inline"/>
+                            <field name="ecpay_credit_ids" widget="many2many_tags" class="oe_inline"/>
+                        </group>
+                    </group>
+                    <group name="group_payment_method_other" string="其他付款方式設定"
+                           invisible="code != 'ECPay'">
+                        <group name="ecpay_other_setting">
+                            <field name="ecpay_apple_pay"/>
+                            <field name="ecpay_webatm"/>
+                            <field name="ecpay_atm"/>
+                            <field name="ecpay_atm_expiredate" invisible="not ecpay_atm"/>
+                            <field name="ecpay_cvs"/>
+                            <field name="ecpay_cvs_expiredate" invisible="not ecpay_cvs"/>
+                            <field name="ecpay_barcode"/>
+                            <field name="ecpay_barcode_expiredate" invisible="not ecpay_barcode"/>
+                            <field name="ecpay_bnpl_pay"/>
+                            <field name="ecpay_twqr_pay"/>
+                        </group>
+                    </group>
+                    <a colspan="2" href="https://developers.ecpay.com.tw/?p=2509" target="_blank"
+                       invisible="code != 'ECPay'" class="btn btn-link">
+                        綠界金流技術文件
+                    </a>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

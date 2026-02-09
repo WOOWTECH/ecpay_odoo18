@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ecpay_res_config_setting_form" model="ir.ui.view">
+            <field name="name">ecpay_res_config_setting_form</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//block[@id='invoicing_settings']" position="after">
+                    <block title="綠界電子發票 (ECPay E-Invoice)" id="ecpay_invoice_settings">
+                        <setting id="ecpay_invoice_mode" string="ECPay Invoice Mode" company_dependent="1" help="Toggle between test and production mode">
+                            <field name="ecpay_demo_mode"/>
+                        </setting>
+                        <setting id="ecpay_auto_invoice" string="Auto Issue Invoice" company_dependent="1" help="Automatically issue invoice after payment">
+                            <field name="auto_invoice"/>
+                        </setting>
+                        <setting id="ecpay_seller_id" string="Seller Tax ID" company_dependent="1" help="Your company's tax identification number">
+                            <field name="seller_Identifier"/>
+                        </setting>
+                        <setting id="ecpay_merchant_id" string="ECPay Merchant ID" company_dependent="1" help="Your ECPay merchant account ID">
+                            <field name="ecpay_MerchantID"/>
+                        </setting>
+                        <setting id="ecpay_hash_key" string="ECPay Hash Key" company_dependent="1" help="ECPay API Hash Key for authentication">
+                            <field name="ecpay_HashKey"/>
+                        </setting>
+                        <setting id="ecpay_hash_iv" string="ECPay Hash IV" company_dependent="1" help="ECPay API Hash IV for encryption">
+                            <field name="ecpay_HashIV"/>
+                        </setting>
+                    </block>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
